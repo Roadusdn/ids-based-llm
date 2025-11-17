@@ -1,0 +1,31 @@
+default:
+  min_confidence: 0.8
+  dry_run: false
+
+rules:
+  - name: block_high_risk
+    if:
+      threat_level:
+        - high
+        - critical
+      score_static_min: 4
+    actions:
+      - block_ip
+      - terminate_session
+      - notify
+
+  - name: throttle_scan
+    if:
+      attack_type:
+        - port scan
+      severity_min: 3
+    actions:
+      - throttle_ip
+      - notify
+
+  - name: notify_only
+    if:
+      threat_level:
+        - medium
+    actions:
+      - notify

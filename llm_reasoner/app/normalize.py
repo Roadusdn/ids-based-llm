@@ -5,4 +5,3 @@ class LogNormalizer:
     @staticmethod
     def normalize(e):
         return e
-

@@ -10,8 +10,8 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT_DIR))
 
-from normalizer.normalizer_suricata import normalize_suricata
-from normalizer.normalizer_zeek import parse_line as parse_zeek_line
+from normalizer.normalize_suricata import normalize_suricata
+from normalizer.normalize_zeek import parse_line as parse_zeek_line
 
 SURICATA_LOG = "/var/log/suricata/eve.json"
 ZEEK_LOG_DIR = "/usr/local/zeek/logs/current/"
@@ -80,4 +80,3 @@ if __name__ == "__main__":
 
     p1.join()
     p2.join()
-
