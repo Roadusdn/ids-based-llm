@@ -1,12 +1,22 @@
 import json
 import os
 import time
-from normalize_suricata import normalize_suricata
-from normalize_zeek import parse_line as parse_zeek_line
+import sys
+from pathlib import Path
+
+# ---------------------------
+#  정상적으로 normalizer import 가능하게 설정
+# ---------------------------
+ROOT_DIR = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT_DIR))
+
+from normalizer.normalizer_suricata import normalize_suricata
+from normalizer.normalizer_zeek import parse_line as parse_zeek_line
 
 SURICATA_LOG = "/var/log/suricata/eve.json"
 ZEEK_LOG_DIR = "/usr/local/zeek/logs/current/"
-OUTPUT_PATH = "/tmp/ids-llm-events.jsonl"  # 이후 LLM 모듈로 전달할 파일
+OUTPUT_PATH = "/tmp/ids-llm-events.jsonl"
+
 
 def tail_f(path):
     with open(path, "r") as f:

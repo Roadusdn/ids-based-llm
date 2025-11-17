@@ -1,0 +1,5 @@
+- pipeline.id: ids-llm
+  path.config: "presentation/elk/logstash/logstash.conf"
+  pipeline.workers: 4
+  pipeline.batch.size: 300
+  pipeline.batch.delay: 5

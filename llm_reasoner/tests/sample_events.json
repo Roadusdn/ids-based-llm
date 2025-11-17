@@ -1,0 +1,27 @@
+[
+  {
+    "timestamp": "2025-11-17T12:00:00",
+    "src_ip": "192.168.0.10",
+    "dst_ip": "8.8.8.8",
+    "event_type": "suricata_alert",
+    "severity": 3,
+    "raw": {
+      "alert": {
+        "signature": "ET SCAN NMAP",
+        "category": "Reconnaissance"
+      }
+    }
+  },
+  {
+    "timestamp": "2025-11-17T12:00:05",
+    "src_ip": "192.168.0.10",
+    "dst_ip": "8.8.8.8",
+    "event_type": "zeek_conn",
+    "severity": 1,
+    "raw": {
+      "conn_state": "S0",
+      "proto": "tcp"
+    }
+  }
+]
+

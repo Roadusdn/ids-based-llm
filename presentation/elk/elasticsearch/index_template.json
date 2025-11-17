@@ -1,0 +1,20 @@
+{
+  "index_patterns": ["ids-llm-events-*"],
+  "template": {
+    "mappings": {
+      "properties": {
+        "timestamp": { "type": "date" },
+        "severity": { "type": "integer" },
+        "src_ip": { "type": "ip" },
+        "dst_ip": { "type": "ip" },
+        "protocol": { "type": "keyword" },
+        "event_type": { "type": "keyword" },
+        "category": { "type": "keyword" },
+        "llm_threat_level": { "type": "keyword" },
+        "llm_attack_type": { "type": "keyword" },
+        "llm_confidence": { "type": "float" }
+      }
+    }
+  }
+}
+

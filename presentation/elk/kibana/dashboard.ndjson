@@ -1,0 +1,171 @@
+{"type":"dashboard","id":"ids-llm-dashboard","attributes":{"title":"IDS-LLM Monitoring Dashboard","description":"Suricata + Zeek + LLM Threat Analysis","hits":0,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"optionsJSON":"{\"useMargins\":true,\"syncColors\":false,\"syncTooltips\":false,\"hidePanelTitles\":false}","panelsJSON":"[
+  {
+    \"panelIndex\": \"1\",
+    \"type\": \"visualization\",
+    \"id\": \"ids-threat-timeline\",
+    \"version\": \"8.10.0\",
+    \"gridData\": {\"x\": 0, \"y\": 0, \"w\": 48, \"h\": 10, \"i\": \"1\"}
+  },
+  {
+    \"panelIndex\": \"2\",
+    \"type\": \"visualization\",
+    \"id\": \"ids-severity-pie\",
+    \"version\": \"8.10.0\",
+    \"gridData\": {\"x\": 48, \"y\": 0, \"w\": 24, \"h\": 10, \"i\": \"2\"}
+  },
+  {
+    \"panelIndex\": \"3\",
+    \"type\": \"visualization\",
+    \"id\": \"ids-top-srcip\",
+    \"version\": \"8.10.0\",
+    \"gridData\": {\"x\": 0, \"y\": 10, \"w\": 36, \"h\": 12, \"i\": \"3\"}
+  },
+  {
+    \"panelIndex\": \"4\",
+    \"type\": \"visualization\",
+    \"id\": \"ids-category-bar\",
+    \"version\": \"8.10.0\",
+    \"gridData\": {\"x\": 36, \"y\": 10, \"w\": 36, \"h\": 12, \"i\": \"4\"}
+  },
+  {
+    \"panelIndex\": \"5\",
+    \"type\": \"visualization\",
+    \"id\": \"ids-llm-threat-pie\",
+    \"version\": \"8.10.0\",
+    \"gridData\": {\"x\": 72, \"y\": 0, \"w\": 24, \"h\": 10, \"i\": \"5\"}
+  },
+  {
+    \"panelIndex\": \"6\",
+    \"type\": \"search\",
+    \"id\": \"ids-latest-events\",
+    \"version\": \"8.10.0\",
+    \"gridData\": {\"x\": 0, \"y\": 22, \"w\": 96, \"h\": 18, \"i\": \"6\"}
+  },
+  {
+    \"panelIndex\": \"7\",
+    \"type\": \"visualization\",
+    \"id\": \"ids-world-map\",
+    \"version\": \"8.10.0\",
+    \"gridData\": {\"x\": 0, \"y\": 40, \"w\": 96, \"h\": 18, \"i\": \"7\"}
+  }
+]"},"references":[
+  {\"type\":\"visualization\",\"id\":\"ids-threat-timeline\",\"name\":\"panel_1\"},
+  {\"type\":\"visualization\",\"id\":\"ids-severity-pie\",\"name\":\"panel_2\"},
+  {\"type\":\"visualization\",\"id\":\"ids-top-srcip\",\"name\":\"panel_3\"},
+  {\"type\":\"visualization\",\"id\":\"ids-category-bar\",\"name\":\"panel_4\"},
+  {\"type\":\"visualization\",\"id\":\"ids-llm-threat-pie\",\"name\":\"panel_5\"},
+  {\"type\":\"search\",\"id\":\"ids-latest-events\",\"name\":\"panel_6\"},
+  {\"type\":\"visualization\",\"id\":\"ids-world-map\",\"name\":\"panel_7\"}
+]}}
+
+{"type":"visualization","id":"ids-threat-timeline","attributes":{"title":"Threat Timeline","visState":"{
+  \"type\": \"line\",
+  \"aggs\": [
+    {\"id\": \"1\", \"type\": \"count\", \"schema\": \"metric\", \"params\": {}},
+    {
+      \"id\": \"2\",
+      \"type\": \"date_histogram\",
+      \"schema\": \"segment\",
+      \"params\": {
+        \"field\": \"timestamp\",
+        \"interval\": \"auto\",
+        \"min_doc_count\": 1
+      }
+    }
+  ]
+}","uiStateJSON":"{}","kibanaSavedObjectMeta":{"searchSourceJSON":"{
+  \"query\": {\"query\": \"\", \"language\": \"kuery\"},
+  \"filter\": []
+}"}}}
+
+{"type":"visualization","id":"ids-severity-pie","attributes":{"title":"Severity Distribution","visState":"{
+  \"type\": \"pie\",
+  \"aggs\": [
+    {\"id\": \"1\", \"type\": \"count\", \"schema\": \"metric\"},
+    {
+      \"id\": \"2\",
+      \"type\": \"terms\",
+      \"schema\": \"segment\",
+      \"params\": {\"field\": \"severity\", \"size\": 5}
+    }
+  ]
+}","kibanaSavedObjectMeta":{"searchSourceJSON":"{
+  \"query\": {\"query\": \"\", \"language\": \"kuery\"},
+  \"filter\": []
+}"}}}
+
+{"type":"visualization","id":"ids-top-srcip","attributes":{"title":"Top Source IPs","visState":"{
+  \"type\": \"histogram\",
+  \"params\": {\"vertical\": true},
+  \"aggs\": [
+    {\"id\": \"1\", \"type\": \"count\", \"schema\": \"metric\"},
+    {
+      \"id\": \"2\",
+      \"type\": \"terms\",
+      \"schema\": \"segment\",
+      \"params\": {\"field\": \"src_ip\", \"size\": 10}
+    }
+  ]
+}","kibanaSavedObjectMeta":{"searchSourceJSON":"{
+  \"query\": {\"query\": \"\", \"language\": \"kuery\"},
+  \"filter\": []
+}"}}}
+
+{"type":"visualization","id":"ids-category-bar","attributes":{"title":"Event Categories","visState":"{
+  \"type\": \"histogram\",
+  \"aggs\": [
+    {\"id\": \"1\", \"type\": \"count\", \"schema\": \"metric\"},
+    {
+      \"id\": \"2\",
+      \"type\": \"terms\",
+      \"schema\": \"segment\",
+      \"params\": {\"field\": \"category\", \"size\": 10}
+    }
+  ]
+}","kibanaSavedObjectMeta":{"searchSourceJSON":"{
+  \"query\": {\"query\": \"\", \"language\": \"kuery\"},
+  \"filter\": []
+}"}}}
+
+{"type":"visualization","id":"ids-llm-threat-pie","attributes":{"title":"LLM Threat Level","visState":"{
+  \"type\": \"pie\",
+  \"aggs\": [
+    {\"id\": \"1\", \"type\": \"count\", \"schema\": \"metric\"},
+    {
+      \"id\": \"2\",
+      \"type\": \"terms\",
+      \"schema\": \"segment\",
+      \"params\": {\"field\": \"llm_threat_level\", \"size\": 10}
+    }
+  ]
+}","kibanaSavedObjectMeta":{"searchSourceJSON":"{
+  \"query\": {\"query\": \"\", \"language\": \"kuery\"},
+  \"filter\": []
+}"}}}
+
+{"type":"visualization","id":"ids-world-map","attributes":{
+"title":"Attack Source Geo Map",
+"visState":"{
+  \"type\": \"tile_map\",
+  \"aggs\": [
+    {\"id\": \"1\", \"type\": \"count\", \"schema\": \"metric\"},
+    {
+      \"id\": \"2\",
+      \"type\": \"geotile_grid\",
+      \"schema\": \"segment\",
+      \"params\": {\"field\": \"src_geo.location\", \"precision\": 2}
+    }
+  ]
+}",
+"kibanaSavedObjectMeta":{
+"searchSourceJSON":"{
+  \"query\": {\"query\": \"\", \"language\": \"kuery\"},
+  \"filter\": []
+}"
+}}}
+
+{"type":"search","id":"ids-latest-events","attributes":{"title":"Latest Events","columns":["timestamp","src_ip","dst_ip","event_type","severity","category","llm_threat_level"],"sort":[["timestamp","desc"]],"kibanaSavedObjectMeta":{"searchSourceJSON":"{
+  \"index\": \"ids-llm-events-*\", 
+  \"query\": {\"query\": \"\", \"language\": \"kuery\"},
+  \"filter\": []
+}"}}}

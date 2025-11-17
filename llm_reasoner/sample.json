@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": "2025-11-17T21:51:20",
+    "src_ip": "1.1.1.1",
+    "dst_ip": "8.8.8.8",
+    "event_type": "suricata_alert",
+    "severity": 3,
+    "raw": {}
+  }
+]
+
