@@ -37,6 +37,15 @@ pytest test_reasoner.py
 pytest response/tests
 ```
 
+### 기타 레이어 테스트
+```bash
+pytest normalizer/tests
+pytest acquisition/tests
+pytest presentation/tests
+# Reasoner LLM 서버 연결 확인 (Ollama 실행 중일 때만):
+# pytest llm_reasoner/tests/test_llm_client.py
+```
+
 ## 정책 기반 자동 대응
 - 정책 파일: `response/config/policies.yaml`
 - 기본값: `dry_run: true` (실제 조치 없이 로그만). 운영 전환 시 `false`.
@@ -59,3 +68,10 @@ pytest response/tests
 ```
 [NIC/PCAP] → Suricata/Zeek → Normalizer → LLM Reasoner → Response API → Dashboard(ELK/Streamlit)
 ```
+
+## 실험(예: VMware/WSL) 체크리스트
+- 트래픽 입력: pcap 재생 또는 미러링 인터페이스 지정 후 Suricata/Zeek 로그가 쌓이는지 확인.
+- Normalizer: `acquisition/scripts/route_log.py`가 로그 경로를 읽어 정규화 이벤트를 생성하는지 확인.
+- Reasoner: Ollama/모델 구동 후 분석 API 호출(E2E 또는 `llm_reasoner/tests/test_analyzer.py`).
+- Response: `dry_run` 값을 상황에 맞게 설정; `/respond` 호출 시 정책→액션 흐름이 로그에 찍히는지 확인(실제 iptables/zeekctl 적용은 비운영 환경에서 먼저 검증).
+- Presentation: Logstash/ES/Kibana 또는 Streamlit이 정규화+LLM+Response 결과를 반영하는지 대시보드 확인.
