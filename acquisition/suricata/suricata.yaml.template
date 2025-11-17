@@ -1,0 +1,15 @@
+# Suricata EVE JSON output configuration for IDS-LLM project.
+# Add this block into /etc/suricata/suricata.yaml under `outputs:` section.
+
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: /home/<USER>/ids-based-llm/acquisition/suricata/eve.json
+      types:
+        - alert
+        - http
+        - dns
+        - tls
+        - flow
+        - anomaly

@@ -1,0 +1,11 @@
+# IDS-LLM 프로젝트용 Zeek 설정 템플릿
+# /usr/local/zeek/share/zeek/site/local.zeek 아래에 추가
+
+@load policy/tuning/json-logs
+
+# HTTP 로그 확장 예시
+@load ./http-extend.zeek
+
+# DNS 로그 확장 예시
+@load ./dns-extend.zeek
+
