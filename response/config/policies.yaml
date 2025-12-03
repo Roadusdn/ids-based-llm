@@ -11,6 +11,7 @@ rules:
       score_static_min: 4
     actions:
       - block_ip
+      - quarantine_ip
       - terminate_session
       - notify
 
@@ -21,6 +22,7 @@ rules:
       severity_min: 3
     actions:
       - throttle_ip
+      - mark_for_review
       - notify
 
   - name: notify_only
@@ -28,4 +30,6 @@ rules:
       threat_level:
         - medium
     actions:
+      - open_ticket
       - notify
+      - mark_for_review

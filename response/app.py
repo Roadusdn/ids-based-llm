@@ -55,6 +55,14 @@ def respond(req: RequestModel):
         if action_name == "notify":
             params["payload"] = {"event": event_data, "reasoning": reasoning_data}
             params["url"] = req.webhook_url or os.environ.get("WEBHOOK_URL")
+        if action_name == "quarantine_ip":
+            params["ip"] = req.event.src_ip or req.event.dst_ip
+        if action_name == "mark_for_review":
+            params["event"] = event_data
+            params["reasoning"] = reasoning_data
+        if action_name == "open_ticket":
+            params["payload"] = {"event": event_data, "reasoning": reasoning_data, "type": "ticket"}
+            params["url"] = req.webhook_url or os.environ.get("WEBHOOK_URL")
 
         try:
             res = execute(action_name, **params)

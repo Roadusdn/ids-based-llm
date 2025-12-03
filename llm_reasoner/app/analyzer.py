@@ -5,8 +5,9 @@ from .llm_client import LLMClient
 
 
 class ThreatAnalyzer:
-    def __init__(self):
-        self.llm = LLMClient()
+    def __init__(self, model: str | None = None, api_url: str | None = None):
+        # model/api_url은 기본값(Ollama) 사용, 필요 시 인자로 또는 env로 오버라이드
+        self.llm = LLMClient(url=api_url, model=model)
 
     # ------------------------------
     # 1) Static Score
@@ -44,6 +45,23 @@ class ThreatAnalyzer:
     def make_prompt(self, events: List[Event], static_score: int) -> str:
         events_dict = [e.model_dump() for e in events]
 
+        allowed_actions = [
+            "block_ip",
+            "throttle_ip",
+            "terminate_session",
+            "notify",
+            "quarantine_ip",
+            "mark_for_review",
+            "open_ticket",
+        ]
+        example_json = {
+            "threat_level": "high",
+            "attack_type": "port_scan",
+            "reasoning": "Summary of why this is high risk",
+            "recommended_actions": ["block_ip", "notify"],
+            "involved_ips": ["1.2.3.4"]
+        }
+
         return f"""
 당신은 네트워크 보안 분석가입니다.
 아래는 최근 10초 동안 수집된 Suricata/Zeek 이벤트입니다.
@@ -54,15 +72,14 @@ static_score: {static_score}
 [이벤트 목록]
 {json.dumps(events_dict, indent=2, default=str)}
 
-위 정보를 바탕으로 아래 JSON 형식으로 반드시 응답하세요:
+반드시 JSON 객체만 출력하세요. JSON 밖의 여분 텍스트나 설명은 금지합니다.
+규칙:
+- threat_level 은 none|low|medium|high|critical 중 하나
+- recommended_actions 값은 {allowed_actions} 중에서만 선택 (필요 시 여러 개)
+- involved_ips 는 공격에 연관된 IP 배열
 
-{{
-  "threat_level": "none | low | medium | high | critical",
-  "attack_type": "",
-  "reasoning": "",
-  "recommended_actions": [],
-  "involved_ips": []
-}}
+출력 예시 (형식만 참고, 내용은 실제 이벤트 기반으로 작성):
+{json.dumps(example_json, indent=2)}
 """
 
     # ------------------------------
@@ -87,7 +104,7 @@ static_score: {static_score}
                 "threat_level": "low",
                 "attack_type": "unknown",
                 "reasoning": raw_text,
-                "recommended_actions": ["alert_admin"],
+                "recommended_actions": ["mark_for_review"],
                 "involved_ips": []
             }
 
@@ -99,4 +116,3 @@ static_score: {static_score}
             score_static=score,
             involved_ips=data.get("involved_ips") or []
         )
-

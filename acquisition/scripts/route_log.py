@@ -13,9 +13,10 @@ sys.path.append(str(ROOT_DIR))
 from normalizer.normalize_suricata import normalize_suricata
 from normalizer.normalize_zeek import parse_line as parse_zeek_line
 
-SURICATA_LOG = "/var/log/suricata/eve.json"
-ZEEK_LOG_DIR = "/usr/local/zeek/logs/current/"
-OUTPUT_PATH = "/tmp/ids-llm-events.jsonl"
+# 경로와 출력 위치를 env로 오버라이드 가능하게 설정
+SURICATA_LOG = os.getenv("SURICATA_LOG", "/var/log/suricata/eve.json")
+ZEEK_LOG_DIR = os.getenv("ZEEK_LOG_DIR", "/usr/local/zeek/logs/current/")
+OUTPUT_PATH = os.getenv("NORMALIZER_OUTPUT", "/tmp/ids-llm-events.jsonl")
 
 
 def tail_f(path):

@@ -26,3 +26,17 @@ def throttle_ip(ip: str, dry_run: bool = True):
     # rate-limit packets from IP
     cmd = ["iptables", "-A", "INPUT", "-s", ip, "-m", "limit", "--limit", "5/minute", "-j", "ACCEPT"]
     return _run_cmd(cmd, dry_run)
+
+
+def quarantine_ip(ip: str, dry_run: bool = True):
+    """
+    Stronger isolation: drop both inbound and outbound traffic for the IP.
+    """
+    cmds = [
+        ["iptables", "-A", "INPUT", "-s", ip, "-j", "DROP"],
+        ["iptables", "-A", "OUTPUT", "-d", ip, "-j", "DROP"],
+    ]
+    results = []
+    for cmd in cmds:
+        results.append(_run_cmd(cmd, dry_run))
+    return results
