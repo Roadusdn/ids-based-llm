@@ -14,42 +14,40 @@ Suricata/Zeek 로그를 정규화하고 LLM으로 위협을 해석·상관분석
 - **Presentation**: `presentation/`  
   - ELK/Streamlit 기반 대시보드(LLM 결과·정책 적용 현황 시각화).
 
-## 빠른 시작
+## 빠른 시작 (센서 VM)
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r llm_reasoner/requirements.txt
-pip install -r response/requirements.txt
-# 필요 시 다른 모듈 요구사항도 설치
+# 1) 의존성/venv/필수 패키지 설치 (이미 설치돼 있으면 건너뜀)
+./setup-sensor.sh               # 기본은 apt+pip, Suricata/Zeek 미설치
+INSTALL_SURICATA=1 INSTALL_ZEEK=1 ./setup-sensor.sh  # 필요 시 IDS 엔진까지 빌드
+
+# 2) venv 활성화
+source .venv/bin/activate
+
+# 3) 모든 레이어 실행
+SURICATA_IFACE=eth0 ZEEK_IFACE=eth0 \
+NORMALIZER_OUTPUT=/tmp/ids-llm-events.jsonl \
+PORT_API=8000 PORT_REASONER=8001 PORT_RESPONSE=9001 PORT_UI=8501 \
+SURICATA_SUDO=1 ZEEK_SUDO=1 \
+./run-all.sh
+# 대시보드: http://<센서IP>:8501
 ```
 
-### Response API 실행
-```bash
-./response/run.sh  # uvicorn response.app:app --host 0.0.0.0 --port 9001 --reload
-```
-
-### Reasoner 테스트
-```bash
-pytest test_reasoner.py
-```
-
-### Response 정책 테스트
-```bash
-pytest response/tests
-```
-
-### 기타 레이어 테스트
-```bash
-pytest normalizer/tests
-pytest acquisition/tests
-pytest presentation/tests
-# Reasoner LLM 서버 연결 확인 (Ollama 실행 중일 때만):
-# pytest llm_reasoner/tests/test_llm_client.py
-```
+### 개별 실행/테스트
+- Reasoner API 단독: `uvicorn app.api:app --host 0.0.0.0 --port 8001 --app-dir llm_reasoner`
+- Response API 단독: `./response/run.sh` (포트 9001)
+- 테스트:  
+  - `pytest llm_reasoner/tests/test_analyzer.py`  
+  - `pytest response/tests`  
+  - `pytest normalizer/tests`  
+  - `pytest acquisition/tests`  
+  - `pytest presentation/tests`  
+  - Ollama 연결 필요: `pytest llm_reasoner/tests/test_llm_client.py`
 
 ## 정책 기반 자동 대응
 - 정책 파일: `response/config/policies.yaml`
-- 기본값: `dry_run: true` (실제 조치 없이 로그만). 운영 전환 시 `false`.
+- 기본값: `dry_run: false` (iptables/zeekctl/웹훅 실제 적용). 안전 테스트 시 `true`로 바꿔 실행.
 - LLM `confidence`가 `min_confidence` 미만이면 액션 미적용.
+- 지원 액션: `block_ip`, `throttle_ip`, `terminate_session`, `notify`, `quarantine_ip`, `mark_for_review`, `open_ticket`
 
 ## 데이터 스키마 (정규화)
 ```json
@@ -70,8 +68,9 @@ pytest presentation/tests
 ```
 
 ## 실험(예: VMware/WSL) 체크리스트
-- 트래픽 입력: pcap 재생 또는 미러링 인터페이스 지정 후 Suricata/Zeek 로그가 쌓이는지 확인.
-- Normalizer: `acquisition/scripts/route_log.py`가 로그 경로를 읽어 정규화 이벤트를 생성하는지 확인.
-- Reasoner: Ollama/모델 구동 후 분석 API 호출(E2E 또는 `llm_reasoner/tests/test_analyzer.py`).
-- Response: `dry_run` 값을 상황에 맞게 설정; `/respond` 호출 시 정책→액션 흐름이 로그에 찍히는지 확인(실제 iptables/zeekctl 적용은 비운영 환경에서 먼저 검증).
-- Presentation: Logstash/ES/Kibana 또는 Streamlit이 정규화+LLM+Response 결과를 반영하는지 대시보드 확인.
+- 네트워크: 센서/공격자/타깃 VM을 동일 브리지/미러링으로 연결해 센서 NIC가 트래픽을 관찰하는지 확인 (`tcpdump -i <iface>`).
+- 입력: pcap 재생(hping, Metasploit 등) → Suricata/Zeek 로그 쌓이는지 확인.
+- Normalizer: `acquisition/scripts/route_log.py`가 `SURICATA_LOG`/`ZEEK_LOG_DIR`를 읽어 `NORMALIZER_OUTPUT`(기본 `/tmp/ids-llm-events.jsonl`)에 이벤트 적재하는지 확인.
+- Reasoner: Ollama(또는 지정 LLM) 구동 후 `/analyze` 호출 또는 end-to-end 흐름 확인.
+- Response: `dry_run` 설정과 정책 적용 여부를 `logs/response-api.log` 및 iptables/웹훅 결과로 확인.
+- Presentation: Streamlit 대시보드(`:8501`)나 ELK로 정규화+LLM+Response 결과 확인.
